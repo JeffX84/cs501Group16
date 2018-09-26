@@ -2,14 +2,17 @@
 CS 50100 Group 16
 Python script to extract raw drone data from Mission Planner output
 
-openpyxl only works with *.xlsx (NOT CSV). Rename Book and Sheet to 'test' and save to xlsx
+openpyxl only works with *.xlsx (NOT CSV).
 """
+
+#change this to name of file - MUST BE in XLS format to work with openpyxl!!
+name = "2018-09-25 22-10-56.xlsx"
 
 import openpyxl as op
 import numpy as np
 
-book = op.load_workbook("test.xlsx")
-sheet = book["test"]
+book = op.load_workbook(name)
+sheet = book.active
 
 #find number of rows
 maxRow = sheet.max_row
@@ -201,5 +204,6 @@ for row in range(2,len(vib_time)+2):
     ws_vib.cell(row=row,column=2).value = vib_x[dataindex]      
     ws_vib.cell(row=row,column=3).value = vib_y[dataindex]      
     ws_vib.cell(row=row,column=4).value = vib_z[dataindex]      
-    
-book.save("NewData.xlsx")
+
+newname = "Data_" + name    
+book.save(newname)
