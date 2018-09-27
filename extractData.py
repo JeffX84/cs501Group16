@@ -19,191 +19,129 @@ maxRow = sheet.max_row
 
 print("%i number of rows found" % (maxRow))
 
-#ahrs data
-ahrs2_time, ahrs2_roll, ahrs2_pitch, ahrs2_yaw, ahrs2_altitude, ahrs2_lat, ahrs2_lng = [],[],[],[],[],[],[]
-ahrs2_header = ["timestamp","ahrs2 roll","ahrs2_pitch","ahrs2_yaw","ahrs2_altitude","ahrs2_lat","ahrs2_lng"]
+mavlink_param = []
+mavlink_index = []
+mavlink_types = ["mavlink_ahrs_t","mavlink_ahrs2_t","mavlink_ahrs3_t","mavlink_attitude_t","mavlink_battery_status_t","mavlink_ekf_status_report_t","mavlink_global_position_int_t","mavlink_gps_raw_int_t",
+                 "mavlink_gps2_raw_t","mavlink_nav_controller_output_t","mavlink_raw_imu_t","mavlink_servo_output_raw_t","mavlink_system_time_t","mavlink_vibration_t"]
 
-ahrs3_time, ahrs3_roll, ahrs3_pitch, ahrs3_yaw, ahrs3_altitude, ahrs3_lat, ahrs3_lng = [],[],[],[],[],[],[]
-ahrs3_header = ["timestamp","ahrs3_roll","ahrs3_pitch","ahrs3_yaw","ahrs3_altitude","ahrs3_lat","ahrs3_lng"]
+#mavlink_ahrs_t
+param = ["timestamp","omegaIx (rad/s)","omegaIy (rad/s)","omegaIz (rad/s)","accel_weight","renorm_val","error_rp","error_yaw"]
+index =  [1,12,14,16,18,20,22,24]
+mavlink_param.append(param)
+mavlink_index.append(index)
 
-#attitude data
-att_time, att_time_boot_ms, att_pitch, att_roll, att_yaw, att_p, att_q, att_r = [],[],[],[],[],[],[],[]
-att_header = ["attitude timestamp","time boot ms","roll angle","pitch angle","yaw angle","roll rate","pitch rate","yaw rate"]
+#mavlink_ahrs2_t
+param = ["timestamp","roll","pitch","yaw","altitude","lat","lng"]
+index =  [1,12,14,16,18,20,22]
+mavlink_param.append(param)
+mavlink_index.append(index)
 
-#Battery data
-batt_time, batt_cc, batt_ec, batt_temp, batt_curr, batt_func, batt_rem,  batt_time_rem = [],[],[],[],[],[],[],[]
-batt_header = ["battery timestamp", "Current Consumed","Energy Consumed","Battery temperature","battery current","battery function","battery remaining","battery time remaining"]
+#mavlink_ahrs3_t
+param = ["timestamp","roll","pitch","yaw","altitude","lat","lng"]
+index =  [1,12,14,16,18,20,22]
+mavlink_param.append(param)
+mavlink_index.append(index)
 
-#raw imu data
-imu_time, imu_xacc, imu_yacc, imu_zacc, imu_xgyro, imu_ygyro, imu_zgyro, imu_xmag, imu_ymag, imu_zmag = [],[],[],[],[],[],[],[],[],[]
-imu_header = ["IMU timestamp","Xaccel","Yaccel","Zaccel","XGyro","YGyro","ZGyro","XMag","YMag","ZMag"]
+#mavlink_attitude_t
+param = ["timestamp","time boot ms","roll angle","pitch angle","yaw angle","roll rate","pitch rate","yaw rate"]
+index =  [1,12,14,16,18,20,22,24]
+mavlink_param.append(param)
+mavlink_index.append(index)
 
-#servo data
-servo_time, servo_utim, servo1_raw, servo2_raw, servo3_raw, servo4_raw = [],[],[],[],[],[]
-servo_header = ["Servo timestamp","Servo utime","Servo 1","Servo 2","Servo 3","Servo 4"]
+#mavlink_battery_status_t
+param = ["timestamp", "Current Consumed","Energy Consumed","Battery temperature","battery current","battery function","battery remaining","battery time remaining"]
+index = [1,12,14,16,20,24,28,30]
+mavlink_param.append(param)
+mavlink_index.append(index)
 
-#vibration data
-vib_time, vib_x,vib_y,vib_z = [],[],[],[]
-vib_header = ["Vibration timestamp","vibration_x","vibration_y","vibration_z"]
+#mavlink_ekf_status_report_t
+param = ["timestamp","velocity_variance","pos_horiz_variance","pos_vert_variance","compass_variance","terrain_alt_variance","flags","airspeed_variance"]
+index = [1,12,14,16,18,20,22,24]
+mavlink_param.append(param)
+mavlink_index.append(index)
 
-for row in range(1,maxRow+1):
-    if(sheet.cell(row=row,column=10).value == "mavlink_ahrs2_t"):
-        ahrs2_time.append(sheet.cell(row=row,column=1).value)
-        ahrs2_roll.append(sheet.cell(row=row,column=12).value)
-        ahrs2_pitch.append(sheet.cell(row=row,column=14).value)
-        ahrs2_yaw.append(sheet.cell(row=row,column=16).value)
-        ahrs2_altitude.append(sheet.cell(row=row,column=18).value)
-        ahrs2_lat.append(sheet.cell(row=row,column=20).value)        
-        ahrs2_lng.append(sheet.cell(row=row,column=22).value)
-    if(sheet.cell(row=row,column=10).value == "mavlink_ahrs3_t"):      
-        ahrs3_time.append(sheet.cell(row=row,column=1).value)
-        ahrs3_roll.append(sheet.cell(row=row,column=12).value)
-        ahrs3_pitch.append(sheet.cell(row=row,column=14).value)
-        ahrs3_yaw.append(sheet.cell(row=row,column=16).value)
-        ahrs3_altitude.append(sheet.cell(row=row,column=18).value)
-        ahrs3_lat.append(sheet.cell(row=row,column=20).value)        
-        ahrs3_lng.append(sheet.cell(row=row,column=22).value)
-    if(sheet.cell(row=row,column=10).value == "mavlink_attitude_t"):
-        att_time.append(sheet.cell(row=row,column=1).value)
-        att_time_boot_ms.append(sheet.cell(row=row,column=12).value)
-        att_roll.append(sheet.cell(row=row,column=14).value)
-        att_pitch.append(sheet.cell(row=row,column=16).value)
-        att_yaw.append(sheet.cell(row=row,column=18).value)        
-        att_p.append(sheet.cell(row=row,column=20).value)
-        att_q.append(sheet.cell(row=row,column=22).value)
-        att_r.append(sheet.cell(row=row,column=24).value)    
-    if(sheet.cell(row=row,column=10).value == "mavlink_battery_status_t"):     
-        batt_time.append(sheet.cell(row=row,column=1).value)     
-        batt_cc.append(sheet.cell(row=row,column=12).value)     
-        batt_ec.append(sheet.cell(row=row,column=14).value)     
-        batt_temp.append(sheet.cell(row=row,column=16).value)     
-        batt_curr.append(sheet.cell(row=row,column=20).value)     
-        batt_func.append(sheet.cell(row=row,column=24).value)     
-        batt_rem.append(sheet.cell(row=row,column=28).value)     
-        batt_time_rem.append(sheet.cell(row=row,column=30).value)     
-    if(sheet.cell(row=row,column=10).value == "mavlink_raw_imu_t"):
-        imu_time.append(sheet.cell(row=row,column=1).value)
-        imu_xacc.append(sheet.cell(row=row,column=14).value)
-        imu_yacc.append(sheet.cell(row=row,column=16).value)
-        imu_zacc.append(sheet.cell(row=row,column=18).value)        
-        imu_xgyro.append(sheet.cell(row=row,column=20).value)
-        imu_ygyro.append(sheet.cell(row=row,column=22).value)
-        imu_zgyro.append(sheet.cell(row=row,column=24).value)  
-        imu_xmag.append(sheet.cell(row=row,column=26).value)
-        imu_ymag.append(sheet.cell(row=row,column=28).value)
-        imu_zmag.append(sheet.cell(row=row,column=30).value)         
-    if(sheet.cell(row=row,column=10).value == "mavlink_servo_output_raw_t"):
-        servo_time.append(sheet.cell(row=row,column=1).value)
-        servo_utim.append(sheet.cell(row=row,column=12).value)
-        servo1_raw.append(sheet.cell(row=row,column=14).value)
-        servo2_raw.append(sheet.cell(row=row,column=16).value)
-        servo3_raw.append(sheet.cell(row=row,column=18).value)
-        servo4_raw.append(sheet.cell(row=row,column=20).value)
-    if(sheet.cell(row=row,column=10).value == "mavlink_vibration_t"):
-        vib_time.append(sheet.cell(row=row,column=1).value)
-        vib_x.append(sheet.cell(row=row,column=14).value)
-        vib_y.append(sheet.cell(row=row,column=16).value)
-        vib_z.append(sheet.cell(row=row,column=18).value)
- 
+#mavlink_global_position_int_t
+param = ["timestamp", "time_boot_ms","lat","lon","alt","relative_alt","vx","vy","vz"]
+index = [1,12,14,16,18,20,22,24,26,28]
+mavlink_param.append(param)
+mavlink_index.append(index)
+
+#mavlink_gps_raw_int_t
+param = ["timestamp", "time_usec","lat","lon","alt","eph","epv","vel","cog","fix_type","satelliets_visibile","alt_ellipsoid","h_acc","v_acc","vel_acc","hdg_acc"]
+index = [1,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40]
+mavlink_param.append(param)
+mavlink_index.append(index)
+
+#mavlink_gps2_raw_t
+param = ["timestamp", "time_usec","lat","lon","alt","dgps_age","eph","epv","vel","cog","fix_type","satelliets_visibile","dgps_numch"]
+index = [1,12,14,16,18,20,22,24,26,28,30,32,34]
+mavlink_param.append(param)
+mavlink_index.append(index)
+
+#mavlink_nav_controller_output_t
+param = ["timestamp", "nav_roll","nav_pitch","alt_error","aspd_error","xtrack_error","nav_bearing","target_bearing","wp_dist"]
+index = [1,12,14,16,18,20,22,24,26]
+mavlink_param.append(param)
+mavlink_index.append(index)
+
+#mavlink_raw_imu_t
+param = ["IMU timestamp","Xaccel","Yaccel","Zaccel","XGyro","YGyro","ZGyro","XMag","YMag","ZMag"]
+index = [1,14,16,18,20,22,24,26,28,30]
+mavlink_param.append(param)
+mavlink_index.append(index)
+
+#mavlink_servo_output_raw_t
+param = ["Servo timestamp","Servo utime","Servo 1","Servo 2","Servo 3","Servo 4"]
+index = [1,12,14,16,18,20]
+mavlink_param.append(param)
+mavlink_index.append(index)
+
+#mavlink_system_time_t
+param = ["timestamp","time_unix_usec","time_boot_ms"]
+index = [1,12,14]
+mavlink_param.append(param)
+mavlink_index.append(index)
+
+#mavlink_vibration_t
+param = ["timestamp","vibration_x","vibration_y","vibration_z"]
+index = [1,14,16,18]
+mavlink_param.append(param)
+mavlink_index.append(index)
+
+
+#error check
+for typ in range(len(mavlink_types)):
+    if(len(mavlink_param[typ]) != len(mavlink_index[typ])):
+        print("ERROR: mavlink type %s has mismatched index and param size" %(mavlink_types[typ]))
+
+#Download data
+mavlink_data = []
+for typ in range(len(mavlink_types)):
+    typdata = []
+    for _ in range(len(mavlink_param[typ])):
+        typdata.append([]) 
+    mavlink_data.append(typdata)
+
+for row in range(1,maxRow):
+    for typ in range(len(mavlink_types)):
+       if(sheet.cell(row=row,column=10).value == mavlink_types[typ]):
+            for param in range(len(mavlink_param[typ])):
+                mavlink_data[typ][param].append(sheet.cell(row=row,column=mavlink_index[typ][param]).value)
+            break                          
 
 #Create new worksheet and output data
-from openpyxl import Workbook
-book = Workbook()
-ws_att = book.active
-ws_att.title = "ATTITUDE"
-ws_ahrs2 = book.create_sheet("AHRS_2")
-ws_ahrs3 = book.create_sheet("AHRS_3")
-ws_batt = book.create_sheet("BATTERY")
-ws_imu = book.create_sheet("IMU")
-ws_servo = book.create_sheet("SERVO")
-ws_vib = book.create_sheet("VIBRATION")
+newbook = op.Workbook()
+newbook.remove_sheet(newbook.active)
 
-#create headers
-
-for i in range(len(ahrs2_header)):
-    ws_ahrs2.cell(row=1,column=i+1).value = ahrs2_header[i]
-for row in range(2,len(ahrs2_time)+2):
-    dataindex = row-2
-    ws_ahrs2.cell(row=row,column=1).value = ahrs2_time[dataindex]
-    ws_ahrs2.cell(row=row,column=2).value = ahrs2_roll[dataindex]
-    ws_ahrs2.cell(row=row,column=3).value = ahrs2_pitch[dataindex]
-    ws_ahrs2.cell(row=row,column=4).value = ahrs2_yaw[dataindex]
-    ws_ahrs2.cell(row=row,column=5).value = ahrs2_altitude[dataindex]
-    ws_ahrs2.cell(row=row,column=6).value = ahrs2_lat[dataindex]
-    ws_ahrs2.cell(row=row,column=7).value = ahrs2_lng[dataindex]
-    
-for i in range(len(ahrs3_header)):
-    ws_ahrs3.cell(row=1,column=i+1).value = ahrs3_header[i]
-for row in range(2,len(ahrs3_time)+2):
-    dataindex = row-2
-    ws_ahrs3.cell(row=row,column=1).value = ahrs3_time[dataindex]
-    ws_ahrs3.cell(row=row,column=2).value = ahrs3_roll[dataindex]
-    ws_ahrs3.cell(row=row,column=3).value = ahrs3_pitch[dataindex]
-    ws_ahrs3.cell(row=row,column=4).value = ahrs3_yaw[dataindex]
-    ws_ahrs3.cell(row=row,column=5).value = ahrs3_altitude[dataindex]
-    ws_ahrs3.cell(row=row,column=6).value = ahrs3_lat[dataindex]
-    ws_ahrs3.cell(row=row,column=7).value = ahrs3_lng[dataindex]  
-
-for i in range(len(att_header)):
-    ws_att.cell(row=1,column=i+1).value = att_header[i]
-for row in range(2,len(att_time)+2):
-    dataindex = row-2
-    ws_att.cell(row=row,column=1).value = att_time[dataindex]
-    ws_att.cell(row=row,column=2).value = att_time_boot_ms[dataindex]    
-    ws_att.cell(row=row,column=3).value = att_roll[dataindex]    
-    ws_att.cell(row=row,column=4).value = att_pitch[dataindex]    
-    ws_att.cell(row=row,column=5).value = att_yaw[dataindex]    
-    ws_att.cell(row=row,column=6).value = att_p[dataindex]    
-    ws_att.cell(row=row,column=7).value = att_q[dataindex]    
-    ws_att.cell(row=row,column=8).value = att_r[dataindex]    
-
-for i in range(len(batt_header)):
-    ws_batt.cell(row=1,column=i+1).value = batt_header[i]    
-for row in range(2,len(batt_time)+2):
-    dataindex = row-2
-    ws_batt.cell(row=row,column=1).value = batt_time[dataindex]  
-    ws_batt.cell(row=row,column=2).value = batt_cc[dataindex]  
-    ws_batt.cell(row=row,column=3).value = batt_ec[dataindex]  
-    ws_batt.cell(row=row,column=4).value = batt_temp[dataindex]  
-    ws_batt.cell(row=row,column=5).value = batt_curr[dataindex]  
-    ws_batt.cell(row=row,column=6).value = batt_func[dataindex]  
-    ws_batt.cell(row=row,column=7).value = batt_rem[dataindex]  
-    ws_batt.cell(row=row,column=8).value = batt_time_rem[dataindex]  
-  
-for i in range(len(imu_header)):
-    ws_imu.cell(row=1,column=i+1).value = imu_header[i]    
-for row in range(2,len(imu_time)+2):
-    dataindex = row-2
-    ws_imu.cell(row=row,column=1).value = imu_time[dataindex]    
-    ws_imu.cell(row=row,column=2).value = imu_xacc[dataindex]    
-    ws_imu.cell(row=row,column=3).value = imu_yacc[dataindex] 
-    ws_imu.cell(row=row,column=4).value = imu_zacc[dataindex] 
-    ws_imu.cell(row=row,column=5).value = imu_xgyro[dataindex]    
-    ws_imu.cell(row=row,column=6).value = imu_ygyro[dataindex] 
-    ws_imu.cell(row=row,column=7).value = imu_zgyro[dataindex] 
-    ws_imu.cell(row=row,column=8).value = imu_xmag[dataindex]    
-    ws_imu.cell(row=row,column=9).value = imu_ymag[dataindex] 
-    ws_imu.cell(row=row,column=10).value = imu_zmag[dataindex] 
-    
-for i in range(len(servo_header)):
-    ws_servo.cell(row=1,column=i+1).value = servo_header[i]    
-for row in range(2,len(servo_time)+2):
-    dataindex = row-2
-    ws_servo.cell(row=row,column=1).value = servo_time[dataindex]        
-    ws_servo.cell(row=row,column=2).value = servo_utim[dataindex]  
-    ws_servo.cell(row=row,column=3).value = servo1_raw[dataindex]  
-    ws_servo.cell(row=row,column=4).value = servo2_raw[dataindex]  
-    ws_servo.cell(row=row,column=5).value = servo3_raw[dataindex]  
-    ws_servo.cell(row=row,column=6).value = servo4_raw[dataindex]  
-    
-for i in range(len(vib_header)):
-    ws_vib.cell(row=1,column=i+1).value = vib_header[i]    
-for row in range(2,len(vib_time)+2):
-    dataindex = row-2
-    ws_vib.cell(row=row,column=1).value = vib_time[dataindex]
-    ws_vib.cell(row=row,column=2).value = vib_x[dataindex]      
-    ws_vib.cell(row=row,column=3).value = vib_y[dataindex]      
-    ws_vib.cell(row=row,column=4).value = vib_z[dataindex]      
+ws = []
+for typ in range(len(mavlink_types)):
+    ws.append(newbook.create_sheet(mavlink_types[typ]))    
+    for param in range(len(mavlink_param[typ])):
+        ws[typ].cell(row=1,column=param+1).value = mavlink_param[typ][param]
+        for row in range(len(mavlink_data[typ][param])):
+            ws[typ].cell(row=row+2,column=param+1).value = mavlink_data[typ][param][row]      
 
 newname = "Data_" + name    
-book.save(newname)
+newbook.save(newname)
+
+
